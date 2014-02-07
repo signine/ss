@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>An Ember dice roller</title>
+
+        <link rel="stylesheet" type="text/css" href="styles.css">
+
+    </head>
+
+    <body>
+
+<script type="text/x-handlebars" id="application">
+    <h1>Dice Roller</h1>
+    {{outlet}}
+</script>
+
+<script type="text/x-handlebars" id="index">
+    <p>
+        {{#linkTo "roll"}}Start rolling dice!{{/linkTo}}
+    </p>
+</script>
+
+<script type="text/x-handlebars" id="roll">
+    <p>
+        Enter your required dice roll below, for instance "3d6" will roll three six sided dice.
+    </p>
+
+    {{input valueBinding="rollString" placeholder="Enter your dice roll, e.g. '3d6' here"}}
+    <button {{action "rollDice"}}>Roll Dice</button>
+
+    {{#if errors}}
+        <div class="errors">
+            {{errors}}
+        </div>
+    {{/if}}
+
+    <hr>
+
+    <h2>Results</h2>
+    {{#each roll in content}}
+        <div class="roll">
+            <span class="roll-number">{{roll.diceNumber}}</span>
+            <span class="roll-result" {{bindAttr style="roll.proportion"}}>{{roll.numberOfRolls}}</span>
+        </div>
+    {{else}}
+        No results yet
+    {{/each}}
+</script>
+
+
+        <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
+        <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.0.0/handlebars.js"></script>
+        <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/ember.js/1.0.0/ember.prod.js"></script>
+        <script type="text/javascript" src="app.js"></script>
+    </body>
+</html>

@@ -1,0 +1,42 @@
+.errors {
+    margin: 2em; 
+    padding: 1em;
+    border: 1px solid #A22;
+    color: #A22;
+    background: #FDD;
+}
+
+.roll-result, .roll-number {
+    display: inline-block;
+    margin: 0.2em;
+    padding: 0.5em;
+}
+
+.roll-number {
+    font-weight: bolder;
+    min-width: 50px;
+}
+
+.roll-result {
+    background: #03C;
+    color: white;
+    text-align: right;
+}
+
+input, button {
+    padding: 0.5em;
+    font-size: 1.1em;
+    border: none;
+    outline: none;
+}
+
+input {
+    background: #EEE;
+    min-width: 350px;
+}
+
+button {
+    cursor:pointer;
+    background: #03C;
+    color: white;
+}
