@@ -1,0 +1,8 @@
+---- Team ----
+http://stats.nba.com/stats/commonteamyears?LeagueID=00
+{"name":"TeamYears","headers":["LEAGUE_ID","TEAM_ID","MIN_YEAR","MAX_YEAR","ABBREVIATION"]
+
+
+http://stats.nba.com/stats/teaminfocommon?
+{"name":"TeamInfoCommon","headers":["TEAM_ID","SEASON_YEAR","TEAM_CITY","TEAM_NAME","TEAM_ABBREVIATION","TEAM_CONFERENCE","TEAM_DIVISION","TEAM_CODE","W","L","PCT","CONF_RANK","DIV_RANK"]
+
