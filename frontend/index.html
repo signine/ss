@@ -1,56 +1,139 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>An Ember dice roller</title>
+        <title>Hoopstuffer</title>
 
-        <link rel="stylesheet" type="text/css" href="styles.css">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <!-- Bootstrap Core CSS -->
+        <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+        <!-- Fonts -->
+        <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+        <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+
+        <!-- Custom Theme CSS -->
+        <link href="css/styles.css" rel="stylesheet">
+
 
     </head>
 
-    <body>
+    <body id="page-top" data-spy="scroll" data-target=".navbar-custom">
 
 <script type="text/x-handlebars" id="application">
-    <h1>Dice Roller</h1>
     {{outlet}}
 </script>
 
-<script type="text/x-handlebars" id="index">
-    <p>
-        {{#linkTo "roll"}}Start rolling dice!{{/linkTo}}
-    </p>
-</script>
+<script type="text/x-handlebars" id="app">
 
-<script type="text/x-handlebars" id="roll">
-    <p>
-        Enter your required dice roll below, for instance "3d6" will roll three six sided dice.
-    </p>
+    <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand" href="#download">
+                    <i class="fa fa-play-circle"></i>  <span class="light">Launch</span> Hoopstuffer
+                </a>
+            </div>
 
-    {{input valueBinding="rollString" placeholder="Enter your dice roll, e.g. '3d6' here"}}
-    <button {{action "rollDice"}}>Roll Dice</button>
-
-    {{#if errors}}
-        <div class="errors">
-            {{errors}}
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+                <ul class="nav navbar-nav">
+                    <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#about">About</a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#contact">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
         </div>
-    {{/if}}
+        <!-- /.container -->
+    </nav>
 
-    <hr>
-
-    <h2>Results</h2>
-    {{#each roll in content}}
-        <div class="roll">
-            <span class="roll-number">{{roll.diceNumber}}</span>
-            <span class="roll-result" {{bindAttr style="roll.proportion"}}>{{roll.numberOfRolls}}</span>
+    <section class="intro">
+        <div class="intro-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2">
+                        <h1 class="brand-heading">Hoopstuffer</h1>
+                        <p class="intro-text">The most powerful statistical engine for basketball analytics, free to use and regularly updated.</p>
+                        <div class="page-scroll">
+                            <a href="#about" class="btn btn-circle">
+                                <i class="fa fa-angle-double-down animated"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    {{else}}
-        No results yet
-    {{/each}}
+    </section>
+
+    <section id="about" class="container content-section text-center">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                <h2>About Hoopstuffer</h2>
+                <p>Hoopstuffer is a query-based statistical engine built to allow flexibility in advanced statistical analysis that hasnt previously been possible.</p>
+                <p>By opening the door to flexibility in minute-by-minute quering, Hoopstuffer allows general managers, coaches, analysts, enthusiasts and casual basketball fans an unparalleled glance at the inner dynamics of the NBA, leading up to the hoisting of the championship trophy in May.</p>
+            <div class="page-scroll">
+                <a href="#download" class="btn btn-circle">
+                    <i class="fa fa-angle-double-down animated"></i>
+                </a>
+            </div>
+            </div>
+
+
+        </div>
+    </section>
+
+    <section id="download" class="content-section text-center">
+        <div class="download-section">
+            <div class="container">
+                <div class="col-lg-8 col-lg-offset-2">
+                    <h2>Get started</h2>
+                    <p>Hoopstuffer is a convenient, fast web app that you can access from anywhere, at any time.</p>
+                    <a href="http://startbootstrap.com/grayscale" class="btn btn-default btn-lg">Launch the Application</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="container content-section text-center">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                <h2>Contact Hoopstuffer</h2>
+                <p>We are always building new tools and features, and request that you send us any suggestions you might have. Youll be the first to know if we implement it! Or, if you just want to say hi, thats cool too. :)</p>
+                <ul class="list-inline banner-social-buttons">
+                    <li><a href="https://twitter.com/" class="btn btn-default btn-lg"><i class="fa fa-twitter fa-fw"></i> <span class="network-name">Twitter</span></a>
+                    </li>
+                    <li><a href="https://github.com/SIGNINE/ss" class="btn btn-default btn-lg"><i class="fa fa-github fa-fw"></i> <span class="network-name">Github</span></a>
+                    </li>
+                    <li><a href="https://plus.google.com/" class="btn btn-default btn-lg"><i class="fa fa-google-plus fa-fw"></i> <span class="network-name">Google+</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
 </script>
 
 
         <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
         <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.0.0/handlebars.js"></script>
         <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/ember.js/1.0.0/ember.prod.js"></script>
-        <script type="text/javascript" src="app.js"></script>
+        <script type="text/javascript" src="js/app.js"></script>
+        <script type="text/javascript" src="js/custom.js"></script>
+        <script type="text/javascript" src="js/jquery.easing.1.3.js"></script>
+        <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
     </body>
 </html>
