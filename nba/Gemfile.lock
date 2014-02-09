@@ -8,6 +8,7 @@ GEM
     json (1.8.1)
     multi_xml (0.5.5)
     pg (0.17.1)
+    sequel (4.7.0)
 
 PLATFORMS
   ruby
@@ -17,3 +18,4 @@ DEPENDENCIES
   httparty
   json
   pg
+  sequel (~> 4.7.0)
