@@ -1,7 +1,8 @@
-require File.join(File.dirname(__FILE__), "NBAStatsResources")
+require_relative "../nba"
 require 'httparty'
 require 'json'
 require 'pp'
+require_relative "NBAStatsResources"
 
 class NBAStats
   include HTTParty

@@ -1,0 +1,19 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    arel (5.0.0)
+    httparty (0.12.0)
+      json (~> 1.8)
+      multi_xml (>= 0.5.2)
+    json (1.8.1)
+    multi_xml (0.5.5)
+    pg (0.17.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  arel (~> 5.0.0)
+  httparty
+  json
+  pg
