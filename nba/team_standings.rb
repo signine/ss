@@ -15,49 +15,49 @@ COLUMNS = [:season_year, :season_type, :team, :team_conference, :team_division, 
 
 loader =
 Proc.new do
-	teams = DB[:team].all
+  teams = DB[:team].all
 
-	c = NBAStats.new "Season" => "2013-14", "LeagueID" => "00", "SeasonType" => "Regular Season"
-	conf_data = []
-	teams.each {|t| conf_data << c.get_stat("teaminfocommon", "TeamID" => t[:nba_stats_id]).first}
+  c = NBAStats.new "Season" => "2013-14", "LeagueID" => "00", "SeasonType" => "Regular Season"
+  conf_data = []
+  teams.each {|t| conf_data << c.get_stat("teaminfocommon", "TeamID" => t[:nba_stats_id]).first}
 
-	page = Nokogiri::HTML(open("http://www.nba.com/standings/team_record_comparison/conferenceNew_Std_Alp.html"))
-	p = page.css('div#nbaFullContent table.genStatTable tr')
-	rows = p.css(".odd").to_a.concat p.css(".even").to_a
+  page = Nokogiri::HTML(open("http://www.nba.com/standings/team_record_comparison/conferenceNew_Std_Alp.html"))
+  p = page.css('div#nbaFullContent table.genStatTable tr')
+  rows = p.css(".odd").to_a.concat p.css(".even").to_a
 
-	data = []
+  data = []
 
-	rows.each do |r|
-	  team = {}.merge DEFAULTS
-	  columns = r.css('td')
-	  code = columns[0].css("a")[0]["href"].gsub(/\//, '')
-	  info = conf_data.select {|t| t.team_code == code}.first
+  rows.each do |r|
+    team = {}.merge DEFAULTS
+    columns = r.css('td')
+    code = columns[0].css("a")[0]["href"].gsub(/\//, '')
+    info = conf_data.select {|t| t.team_code == code}.first
 
-	  team[:team] = code
-	  team[:team_conference] = info.team_conference
-	  team[:team_division] = info.team_division
-	  team[:conf_rank] = info.conf_rank
-	  team[:div_rank] = info.div_rank
-	  team[:pct] = columns[3].text.to_f
-	  team[:gb] = columns[4].text.to_f
-	  team[:conf_wins] = wins.call columns[5].text
-	  team[:conf_losses] = losses.call columns[5].text
-	  team[:div_wins] = wins.call columns[6].text
-	  team[:div_losses] = losses.call columns[6].text
-	  team[:home_wins] = wins.call columns[7].text
-	  team[:home_losses] = losses.call columns[7].text
-	  team[:road_wins] = wins.call columns[8].text
-	  team[:road_losses] = losses.call columns[8].text
-	  team[:wins] = info.w
-	  team[:losses] = info.l
-	  team[:total_games] = info.w = info.l
-	  team[:last_10_wins] = wins.call columns[9].text
-	  team[:last_10_losses] = losses.call columns[9].text
-	  team[:streak] = columns[10].text
+    team[:team] = code
+    team[:team_conference] = info.team_conference
+    team[:team_division] = info.team_division
+    team[:conf_rank] = info.conf_rank
+    team[:div_rank] = info.div_rank
+    team[:pct] = columns[3].text.to_f
+    team[:gb] = columns[4].text.to_f
+    team[:conf_wins] = wins.call columns[5].text
+    team[:conf_losses] = losses.call columns[5].text
+    team[:div_wins] = wins.call columns[6].text
+    team[:div_losses] = losses.call columns[6].text
+    team[:home_wins] = wins.call columns[7].text
+    team[:home_losses] = losses.call columns[7].text
+    team[:road_wins] = wins.call columns[8].text
+    team[:road_losses] = losses.call columns[8].text
+    team[:wins] = info.w
+    team[:losses] = info.l
+    team[:total_games] = info.w = info.l
+    team[:last_10_wins] = wins.call columns[9].text
+    team[:last_10_losses] = losses.call columns[9].text
+    team[:streak] = columns[10].text
 
-	  data << team
-	end
-	data
+    data << team
+  end
+  data
 end
 
 collector = NBA::DataCollector.new loader, TABLE, COLUMNS
