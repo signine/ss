@@ -2,13 +2,13 @@ require_relative "../nba"
 require 'sequel'
 
 module NBA
-	module DBManager
+  module DBManager
 
-		DEFAULT = {:adapter=>'postgres', :database=>'nba'}
+    DEFAULT = {:adapter=>'postgres', :database=>'nba'}
 
-		def self.create_connection opts = {}
-			Sequel.connect(DEFAULT.merge(opts))
-		end
+    def self.create_connection opts = {}
+      Sequel.connect(DEFAULT.merge(opts))
+    end
 
-	end
+  end
 end

@@ -4,9 +4,9 @@ require 'pp'
 
 module NBA
   class DataCollector
-  	include NBA::CommandLineParser
+    include NBA::CommandLineParser
 
-  	def initialize loader, table_name, columns, opts = {}
+    def initialize loader, table_name, columns, opts = {}
       @loader = loader
       @table_name = table_name
       @columns = columns
@@ -15,46 +15,46 @@ module NBA
       @loaded = false
       @load_lock = Mutex.new
       @persist_lock = Mutex.new
-  	end
+    end
 
-  	def run argv
-  		command = get_command argv
-  		opts = parse_opts(get_opts(argv))
+    def run argv
+      command = get_command argv
+      opts = parse_opts(get_opts(argv))
 
-  		case command
-  		when "dry-run"
-  			collect
-  			print
-  		when "load"
-  			collect 
-  			persist opts
-  		else
-  			raise "Unknown command: #{command}"
-  		end
-  	end
+      case command
+      when "dry-run"
+        collect
+        print
+      when "load"
+        collect 
+        persist opts
+      else
+        raise "Unknown command: #{command}"
+      end
+    end
 
-  	def collect
-  		@load_lock.synchronize do
-  	    @data = @loader.call
-        @loaded = true			
-  		end unless @loaded
+    def collect
+      @load_lock.synchronize do
+        @data = @loader.call
+        @loaded = true      
+      end unless @loaded
 
-  		@data
-  	end
+      @data
+    end
 
-  	def print
-  		collect unless @loaded
+    def print
+      collect unless @loaded
 
-  		puts "COLUMNS: #{@columns}"
+      puts "COLUMNS: #{@columns}"
       @data.each {|data| pp data }
       puts "Total: #{@data.length}"
-  	end
+    end
 
-  	def persist opts = {}
+    def persist opts = {}
       options = @default_opts.merge opts
 
       @persist_lock.synchronize do
-      	collect unless @loaded
+        collect unless @loaded
         db = NBA::DBManager.create_connection
         table = db[@table_name]
 
@@ -63,19 +63,19 @@ module NBA
           table.insert data
         end
       end
-  	end
+    end
 
-  	private
-  	def log msg, opts = {}
+    private
+    def log msg, opts = {}
       puts msg unless opts.include?(:quiet) && opts[:quiet] == true
-  	end
+    end
 
-  	def parse_opts flags
+    def parse_opts flags
       flags.inject({}) { |opts, flag| opts.merge parse_flag(flag) }
-  	end
+    end
 
-  	def parse_flag flag
-  		case flag
+    def parse_flag flag
+      case flag
         when "-q" then {:quiet => true}
       end
     end
