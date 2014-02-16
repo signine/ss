@@ -1,0 +1,211 @@
+--- Architecture ---
+
+Two entities: Teams and Players
+
+Tables
+
+Name: team
+discription: high-level team data, should never be updated
+Schema: 
+city, 
+name, 
+TEAM_ABBREVIATION, 
+code, 
+min_year, 
+max_year, 
+nba_stats_id
+
+
+Name: team_standings
+discription: Full season summary or ongoing season data
+Schema: 
+season_year, 
+season_type(regular/playoff), 
+team_conference, 
+team_division, 
+wins, 
+losses, 
+pct, 
+conf_rank, 
+div_rank, 
+leage_rank
+won_champ(boolean)
+
+I am puting conference and division in team_season table, just in case they change in a season
+
+Name: team_standings_timeline
+discription: Timeline of season. Snapshot of standings every day of the season
+schema:
+date
+season_year, 
+season_type(regular/playoff), 
+team_conference, 
+team_division, 
+total_games
+wins, 
+losses, 
+pct, 
+conf_rank, 
+div_rank, 
+gb, 
+conf_ratio, 
+div_rato,
+home, 
+road, 
+last_ten, 
+streak
+Source:
+teaminfocommon, standings(html), synced daily before midnight
+
+
+
+
+Name: player
+discription: high-level player data
+schema:
+name
+birthdate
+height
+weight
+current_team
+position
+jersey_no
+draft_round
+draft_pos
+draft_team
+draft_year
+university?
+nba_stats_id (id for nba.com)
+
+
+Name: player_career
+discription: full career summary. One or two rows per player
+schema: (look at for full names http://stats.nba.com/playerCareer.html?PlayerID=203112)
+GP
+GS
+MIN
+FGM
+FGA
+FG%
+3FGM
+3FGA
+3FG%
+FTM
+FTA
+FT%
+OREB
+DREB
+REB
+AST
+TOV
+STL
+season_type(regular, playoff)
+
+Name: player_season
+discription: Season summary
+schema:
+season
+team
+GP
+GS
+MIN
+FGM
+FGA
+FG%
+3FGM
+3FGA
+3FG%
+FTM
+FTA
+FT%
+OREB
+DREB
+REB
+AST
+TOV
+STL
+season_type(regular, playoff)
+
+Name: player_timeline
+discription: per game log
+game_id
+date
+season
+home_team
+visitor_team
+W/L (boolean 1 = win)
+MIN
+FGM
+FGA
+FG%
+3FGM
+3FGA
+3FG%
+FTM
+FTA
+FT%
+OREB
+DREB
+REB
+AST
+STL
+BLK
+TOV
+PF
+PTS
++/-
+
+Name: player_shots
+discription: shot chart
+schema:
+checkout: http://stats.nba.com/stats/shotchartdetail?Season=2013-14&SeasonType=Regular+Season&LeagueID=00&TeamID=0&PlayerID=203112&GameID=&Outcome=&Location=&Month=0&SeasonSegment=&DateFrom=&DateTo=&OpponentTeamID=0&VsConference=&VsDivision=&Position=&RookieYear=&GameSegment=&Period=0&LastNGames=0&ContextFilter=&ContextMeasure=FG_PCT
+
+Some subset of the following:
+["GRID_TYPE","GAME_ID","GAME_EVENT_ID","PLAYER_ID","PLAYER_NAME","TEAM_ID","TEAM_NAME","PERIOD","MINUTES_REMAINING","SECONDS_REMAINING","EVENT_TYPE","ACTION_TYPE","SHOT_TYPE","SHOT_ZONE_BASIC","SHOT_ZONE_AREA","SHOT_ZONE_RANGE","SHOT_DISTANCE","LOC_X","LOC_Y","SHOT_ATTEMPTED_FLAG","SHOT_MADE_FLAG"]
+
+Example:
+["Shot Chart Detail","0021300085",224,203112,"Quincy Acy",1610612761,"Toronto Raptors",2,1,53,"Made Shot","Jump Shot","3PT Field Goal","Above the Break 3","Left Side Center(LC)","24+ ft.",26,-221,145,1,1]
+
+Name: game
+discription: full game summary
+schema:
+season
+home_team
+visitor_team
+home_score
+visitor_score
+game_type (regular, playoff)
+attendance
+
+Name: game_boxscore
+discription: per period summary
+schema:
+season
+home_team
+visitor_team
+home_score
+visitor_score
+game_type (regular, playoff)
+period
+
+Name: game_log
+discription: play by play. This one is going to be hard I think because of how the data is represented
+Look at: http://stats.nba.com/stats/playbyplay?GameID=0021300710&StartPeriod=0&EndPeriod=0&tabView=playbyplay
+schema:
+something like
+["GAME_ID","EVENTNUM","EVENTMSGTYPE","EVENTMSGACTIONTYPE","PERIOD","WCTIMESTRING","PCTIMESTRING","HOMEDESCRIPTION","NEUTRALDESCRIPTION","VISITORDESCRIPTION","SCORE","SCOREMARGIN"]
+
+Name: game_lineups
+discription: another hard one
+look at: http://stats.nba.com/stats/teamdashlineups?Season=2013-14&SeasonType=Regular+Season&LeagueID=00&TeamID=1610612754&MeasureType=Base&PerMode=PerGame&PlusMinus=N&PaceAdjust=N&Rank=N&Outcome=&Location=&Month=0&SeasonSegment=&DateFrom=&DateTo=&OpponentTeamID=0&VsConference=&VsDivision=&GameSegment=&Period=0&LastNGames=0&GroupQuantity=5&GameScope=&GameID=0021300710&pageNo=1&rowsPerPage=25
+
+What we have to work with:
+["GROUP_SET","GROUP_VALUE","TEAM_ID","TEAM_ABBREVIATION","TEAM_NAME","GP","W","L","W_PCT","MIN","FGM","FGA","FG_PCT","FG3M","FG3A","FG3_PCT","FTM","FTA","FT_PCT","OREB","DREB","REB","AST","TOV","STL","BLK","BLKA","PF","PFD","PTS","PLUS_MINUS"]
+
+
+After we populate the tables with all historic data, we can just use the boxscores/logs from each game to update all the team, season, and player summaries
+
+Difficult things? ->
+- using game logs and game lineups
+- per game shot chart?
+
