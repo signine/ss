@@ -63,8 +63,3 @@ end
 collector = NBA::DataCollector.new loader, TABLE, COLUMNS
 
 collector.run ARGV
-
-
-
-
-

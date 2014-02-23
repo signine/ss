@@ -7,7 +7,7 @@ COLUMNS = [:team, :season_type, :season_year, :team_conference, :team_division, 
 
 DB = NBA::DBManager.create_connection
 TEAMS = DB[:team].select(:nba_stats_id).all
-SEASON_TYPES = ["Regular Season", "Playoffs"]
+SEASON_TYPES = ["Regular Season"]
 SEASONS = NBA::SeasonString.get_seasons 1990, 2014
 DEFAULTS = {"LeagueID" => "00"}
 
