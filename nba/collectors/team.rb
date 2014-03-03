@@ -26,6 +26,8 @@ Proc.new do
       :max_year => team.max_year,
       :nba_stats_id => team.team_id
     }
+
+    pp data.last
   end  
   
   data

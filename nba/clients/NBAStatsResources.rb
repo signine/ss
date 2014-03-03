@@ -21,6 +21,10 @@ class NBAStatsResources
      "commonteamyears"=>
       {:required => ["LeagueID"],
        :headers => ["LEAGUE_ID","TEAM_ID","MIN_YEAR","MAX_YEAR","ABBREVIATION"]
+      },
+     "commonallplayers"=>
+      {:required => ["Season", "IsOnlyCurrentSeason", "LeagueID"],
+       :headers => ["PERSON_ID","DISPLAY_LAST_COMMA_FIRST","ROSTERSTATUS","FROM_YEAR","TO_YEAR","PLAYERCODE"]
       }
     }
 

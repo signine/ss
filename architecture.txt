@@ -67,16 +67,19 @@ name
 birthdate
 height
 weight
-current_team
-position
-jersey_no
 draft_round
 draft_pos
-draft_team
 draft_year
 university?
 nba_stats_id (id for nba.com)
 
+Name: team_roster
+discription:
+schema:
+name
+position
+jersey
+year
 
 Name: player_career
 discription: full career summary. One or two rows per player

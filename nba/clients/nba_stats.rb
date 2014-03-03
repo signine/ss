@@ -27,6 +27,7 @@ class NBAStats
     if valid?(response)
       response.body
     else
+      pp response
       raise "Resource: \"#{resource}\" returned code: #{response.code}"
     end
   end

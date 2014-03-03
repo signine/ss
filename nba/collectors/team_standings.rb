@@ -56,6 +56,7 @@ Proc.new do
     team[:streak] = columns[10].text
 
     data << team
+    pp team
   end
   data
 end
