@@ -1,11 +1,11 @@
 CREATE TABLE players 
 (
-  id VARCHAR(100) NOT NULL PRIMARY KEY,
+  id SERIAL NOT NULL PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
-  bday DATE,
+  bdate DATE,
   bplace VARCHAR(50),
-  weight INTEGER,
-  height INTEGER,
+  wt INTEGER,
+  ht VARCHAR(10),
   college VARCHAR(50),
   draft_year INTEGER,
   draft_round INTEGER,

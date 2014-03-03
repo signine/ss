@@ -28,7 +28,8 @@ module NBA
       url = RESOURCES[:player][:url] % id
       page = Nokogiri::HTML(open(url))
       player = {}
-
+      player[:name] = parse_name page
+      
       ht_wt_string = page.css("ul.general-info li")[1].text
       player[:wt] = parse_wt ht_wt_string
       player[:ht] = parse_ht ht_wt_string
@@ -70,6 +71,10 @@ module NBA
       url.split("/")[-2].to_i
     end
 
+    def parse_name page
+      page.css("div.mod-content h1").text
+    end
+
     def parse_wt string
       string.split(',').last.strip!.split.first.to_i
     end
@@ -81,7 +86,8 @@ module NBA
     def parse_ht string
       raw = string.split(',').first.strip
       replace = raw.length == 5 ? '0' : '' 
-      raw.gsub(/ /, replace)
+      raw.gsub!(/ /, replace)
+      raw.chomp('"')
     end
 
     def parse_birth string
@@ -94,7 +100,6 @@ module NBA
     end
 
     def parse_draft string
-      puts string
       info = {}
       tokens = string.split(':')
       info[:draft_year] = tokens.first.strip.to_i
