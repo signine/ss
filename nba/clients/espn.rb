@@ -121,3 +121,4 @@ end
 
 #c = NBA::ESPN.new
 #puts c.get_player 6546
+#puts c.get_roster 'phx'
