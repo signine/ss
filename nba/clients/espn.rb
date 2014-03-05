@@ -6,8 +6,15 @@ require 'date'
 module NBA
   class ESPN
     include NBA::ESPNResources    
+     
+    TEAM_ABV_OVERRIDE = 
+      {
+        "UTA" => "UTH",
+        "NOP" => "NO"
+      }
 
     def get_roster team_abv
+      team_abv = check_overrides team_abv
       roster_url = RESOURCES[:roster][:url] % team_abv   
       page = Nokogiri::HTML(open(roster_url))
 
@@ -49,6 +56,11 @@ module NBA
     end
 
     private
+    def check_overrides abv
+      return TEAM_ABV_OVERRIDE[abv] if TEAM_ABV_OVERRIDE.has_key? abv
+      abv
+    end
+
     def find_info_string page, info_type
       string = page.select { |p| p.text.start_with? info_type }.first
       if string
@@ -62,6 +74,11 @@ module NBA
       player = {}
       ROSTER_TABLE.each { |header, index|  player[header] = row_data[index].text }
       url = row_data[ROSTER_TABLE[:name]].css("a")[0]["href"]
+      player[:jersey] = player[:jersey].to_i
+      player[:age] = player[:age].to_i
+      player[:wt] = player[:wt].to_i
+      player[:ht] = convert_ht player[:ht].gsub!(/-/, "' ")
+      player[:salary] = player[:salary].gsub!(/[$,]/, '')
       player[:espn_id] = get_player_id_from_url url
 
       player
@@ -85,9 +102,15 @@ module NBA
     # i.e 6' 10" -> 6'10"
     def parse_ht string
       raw = string.split(',').first.strip
-      replace = raw.length == 5 ? '0' : '' 
-      raw.gsub!(/ /, replace)
-      raw.chomp('"')
+      convert_ht raw
+     end
+
+    def convert_ht ht
+      ht.chomp!('"')
+      replace = ht.length == 4 ? '0' : '' 
+      ht.gsub!(/ /, replace)
+
+      ht
     end
 
     def parse_birth string
@@ -120,5 +143,5 @@ module NBA
 end
 
 #c = NBA::ESPN.new
-#puts c.get_player 6546
+#puts c.get_player 6590
 #puts c.get_roster 'phx'
