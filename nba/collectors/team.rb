@@ -1,22 +1,20 @@
-require_relative 'clients/nba_stats'
-require_relative 'nba'
+require_relative '../clients/nba_stats'
+require_relative '../nba'
 require 'sequel'
 
 TABLE = :team
 COLUMNS = [:city, :name, :abbreviation, :code, :min_year, :max_year, :nba_stats_id]
 
-loader = 
-Proc.new do 
+provider = 
+Enumerator.new do |yielder| 
   c = NBAStats.new "Season" => "2013-14", "LeagueID" => "00", "SeasonType" => "Regular Season"
   teams = c.get_stat("commonteamyears")
   teams.select!{|team| team.abbreviation != nil }
 
-  data = []
-
   teams.each do |team|
     info = c.get_stat("teaminfocommon", {"TeamID" => team.team_id}).first
 
-    data << 
+    yielder << 
     {
       :city => info.team_city, 
       :name => info.team_name, 
@@ -27,12 +25,9 @@ Proc.new do
       :nba_stats_id => team.team_id
     }
 
-    pp data.last
   end  
-  
-  data
 end
 
-collector = NBA::DataCollector.new loader, TABLE, COLUMNS
-
-collector.run ARGV
+collector = NBA::DataCollector.new provider, TABLE, COLUMNS, :batch_size => 10
+runner = NBA::DataCollectorClient.new collector
+runner.run ARGV

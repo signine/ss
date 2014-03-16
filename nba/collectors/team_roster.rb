@@ -1,5 +1,5 @@
 require_relative '../clients/espn'
-require_relative '../util/db_manager'
+require_relative '../nba'
 require 'sequel'
 
 TABLE = :team_roster
@@ -8,9 +8,8 @@ COLUMNS = [:jersey, :pos, :age, :wt, :ht, :salary, :name, :team, :season, :playe
 DB = NBA::DBManager.create_connection
 $c = NBA::ESPN.new
 
-loader = 
-Proc.new do
-  players = []
+provider = 
+Enumerator.new do |yielder|
   teams = DB[:team].all
 
   teams.each do |team|
@@ -21,13 +20,10 @@ Proc.new do
       p[:season] = SEASON
       p[:team] = team[:code] 
       p.delete :espn_id
+
+      yielder << p
     end
-    players.concat roster
-
-    pp roster
   end
-
-  players
 end
 
 def find_player_id_by_name player
@@ -43,5 +39,6 @@ def find_player_id_by_name player
   ret.first[:id]
 end
 
-collector = NBA::DataCollector.new loader, TABLE, COLUMNS
-collector.run ARGV
+collector = NBA::DataCollector.new provider, TABLE, COLUMNS, :batch_size => 10
+runner = NBA::DataCollectorClient.new collector
+runner.run ARGV

@@ -1,5 +1,5 @@
-require_relative 'clients/nba_stats'
-require_relative 'nba'
+require_relative '../clients/nba_stats'
+require_relative '../nba'
 require 'sequel'
 
 TABLE = :standings
@@ -11,10 +11,9 @@ SEASON_TYPES = ["Regular Season"]
 SEASONS = NBA::SeasonString.get_seasons 1990, 2014
 DEFAULTS = {"LeagueID" => "00"}
 
-loader = 
-Proc.new do
+provider = 
+Enumerator.new do |yielder|
 	c = NBAStats.new DEFAULTS
-	data = []
 
 	SEASONS.each do |season|
 		SEASON_TYPES.each do |season_type|
@@ -27,7 +26,7 @@ Proc.new do
 					info = info.first
 				end
 
-				data <<
+				yielder <<
 				{
 					:team => info.team_code,
 					:season_year => season,
@@ -40,15 +39,11 @@ Proc.new do
 					:losses => info.l,
 					:pct => info.pct,	
 				}
-				pp data.last
 			end
 		end
 	end
-
-	data
 end
 
-collector = NBA::DataCollector.new loader, TABLE, COLUMNS
-
-collector.run ARGV
-
+collector = NBA::DataCollector.new provider, TABLE, COLUMNS, :batch_size => 10
+runner = NBA::DataCollectorClient.new collector
+runner.run ARGV

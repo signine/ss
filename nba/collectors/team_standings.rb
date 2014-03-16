@@ -1,5 +1,5 @@
-require_relative 'clients/nba_stats'
-require_relative 'util/db_manager'
+require_relative '../clients/nba_stats'
+require_relative '../nba'
 require 'sequel'
 require 'nokogiri'
 require 'open-uri'
@@ -13,8 +13,8 @@ DB = NBA::DBManager.create_connection
 TABLE = :team_standings_timeline
 COLUMNS = [:season_year, :season_type, :team, :team_conference, :team_division, :conf_rank, :div_rank, :pct, :gb, :conf_wins, :conf_losses, :div_wins, :div_losses, :home_wins, :home_losses, :road_wins, :road_losses, :wins, :losses, :total_games, :last_10_wins, :last_10_losses, :streak]
 
-loader =
-Proc.new do
+provider =
+Enumerator.new do |yielder|
   teams = DB[:team].all
 
   c = NBAStats.new "Season" => "2013-14", "LeagueID" => "00", "SeasonType" => "Regular Season"
@@ -24,8 +24,6 @@ Proc.new do
   page = Nokogiri::HTML(open("http://www.nba.com/standings/team_record_comparison/conferenceNew_Std_Alp.html"))
   p = page.css('div#nbaFullContent table.genStatTable tr')
   rows = p.css(".odd").to_a.concat p.css(".even").to_a
-
-  data = []
 
   rows.each do |r|
     team = {}.merge DEFAULTS
@@ -55,12 +53,10 @@ Proc.new do
     team[:last_10_losses] = losses.call columns[9].text
     team[:streak] = columns[10].text
 
-    data << team
-    pp team
+    yielder << team
   end
-  data
 end
 
-collector = NBA::DataCollector.new loader, TABLE, COLUMNS
-
-collector.run ARGV
+collector = NBA::DataCollector.new provider, TABLE, COLUMNS, :batch_size => 10
+runner = NBA::DataCollectorClient.new collector
+runner.run ARGV

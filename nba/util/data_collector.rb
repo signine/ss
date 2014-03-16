@@ -1,41 +1,32 @@
-require_relative 'command_line_parser'
-require 'thread'
 require 'pp'
 
 module NBA
   class DataCollector
-    include NBA::CommandLineParser
+    
+    DEFAULTS = { :batch_size => 100, :persist => false }
 
-    def initialize loader, table_name, columns, opts = {}
-      @loader = loader
+    def initialize provider, table_name, columns, opts = {}
+      @provider = provider
       @table_name = table_name
       @columns = columns
-      @default_opts = opts
-      @data = nil
+      @default_opts = DEFAULTS.merge opts 
+      @data = [] 
       @loaded = false
       @load_lock = Mutex.new
       @persist_lock = Mutex.new
     end
 
-    def run argv
-      command = get_command argv
-      opts = parse_opts(get_opts(argv))
+    def collect opts = {}
+      opts = @default_opts.merge opts
 
-      case command
-      when "dry-run"
-        collect
-        print
-      when "load"
-        collect 
-        persist opts
-      else
-        raise "Unknown command: #{command}"
-      end
-    end
-
-    def collect
       @load_lock.synchronize do
-        @data = @loader.call
+        if opts[:persist] == true
+          @DB ||= NBA::DBManager.create_connection
+          @DB.transaction { _collect opts }
+        else
+          _collect opts 
+        end
+
         @loaded = true      
       end unless @loaded
 
@@ -50,22 +41,39 @@ module NBA
       puts "Total: #{@data.length}"
     end
 
-    def persist opts = {}
-      options = @default_opts.merge opts
-
+    private
+    def persist batch 
       @persist_lock.synchronize do
-        collect unless @loaded
-        db = NBA::DBManager.create_connection
-        table = db[@table_name]
+        @db ||= NBA::DBManager.create_connection
+        table = @db[@table_name]
 
-        @data.each_with_index do |data, i|
-          log "Inserting #{data}\n --> #{i+1}/#{@data.length}", options
+        batch.each_with_index do |data, i|
+          puts "Inserting --> #{i+1}/#{batch.length}"
           table.insert data
         end
       end
     end
 
-    private
+    def _collect opts
+      batch_size = opts[:batch_size]
+      batch_num = 0
+
+      loop do 
+         batch_num += 1
+         batch = []
+
+         batch_size.times do 
+           batch << @provider.next
+           pp batch.last
+         end
+         @data.concat batch
+
+         persist batch if opts[:persist]
+         puts "------- Batch: #{batch_num} Size: #{batch.length} -------"
+      end
+      puts "------- Batch: #{batch_num} Total: #{@data.length} -------"
+    end
+
     def log msg, opts = {}
       puts msg unless opts.include?(:quiet) && opts[:quiet] == true
     end
