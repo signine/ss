@@ -71,7 +71,7 @@ module NBA
          persist batch if opts[:persist]
          puts "------- Batch: #{batch_num} Size: #{batch.length} -------"
       end
-      puts "------- Batch: #{batch_num} Total: #{@data.length} -------"
+      puts "------- Total: #{@data.length} -------"
     end
 
     def log msg, opts = {}

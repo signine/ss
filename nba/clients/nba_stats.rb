@@ -34,13 +34,14 @@ class NBAStats
 
   def get_stat(resource, opts = {})
     response = JSON.parse get_stat_raw(resource, opts)
-    response = extract_data response  
-    convert_to_struct(resource, response)
+    response = extract_data response, opts  
+    convert_to_struct(resource, response, opts)
   end
 
   private
-  def convert_to_struct(resource, response)
-    response.map! {|data| eval "Struct::#{resource.capitalize}.new(*data)"}
+  def convert_to_struct(resource, response, opts)
+    struct_name = opts[:result_set] ? opts[:result_set] : NBAStatsResources::RESOURCES[resource][:result_set].first[:name]
+    response.map! {|data| eval "Struct::#{struct_name}.new(*data)"}
   end
 
   def check_params(required, given)
@@ -56,7 +57,11 @@ class NBAStats
     response.code == 200
   end
 
-  def extract_data(response)
-    response["resultSets"][0]["rowSet"]
+  def extract_data(response, opts)
+    if opts[:result_set]
+      response["resultSets"].select { |r| r["name"] == opts[:result_set] }["rowSet"]
+    else
+      response["resultSets"].first["rowSet"]
+    end
   end
 end
