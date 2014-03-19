@@ -50,6 +50,11 @@ class Boxscore
     boxscore
   end
 
+  def ingest_player_stats
+
+
+  end
+
   def game_time_to_min time
     time = time.split(':')
     hr = time.first.strip.to_i * 60
