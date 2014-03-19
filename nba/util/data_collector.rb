@@ -5,10 +5,9 @@ module NBA
     
     DEFAULTS = { :batch_size => 100, :persist => false }
 
-    def initialize provider, table_name, columns, opts = {}
+    def initialize provider, table_name, opts = {}
       @provider = provider
       @table_name = table_name
-      @columns = columns
       @default_opts = DEFAULTS.merge opts 
       @data = [] 
       @loaded = false
@@ -36,11 +35,9 @@ module NBA
     def print
       collect unless @loaded
 
-      puts "COLUMNS: #{@columns}"
       @data.each {|data| pp data }
       puts "Total: #{@data.length}"
     end
-
     private
     def persist batch 
       @persist_lock.synchronize do
@@ -61,15 +58,18 @@ module NBA
       loop do 
          batch_num += 1
          batch = []
+         
+         begin 
+           batch_size.times do 
+             batch << @provider.next
+             pp batch.last
+           end
+         ensure 
+           @data.concat batch
 
-         batch_size.times do 
-           batch << @provider.next
-           pp batch.last
+           persist batch if opts[:persist]
+           puts "------- Batch: #{batch_num} Size: #{batch.length} -------"
          end
-         @data.concat batch
-
-         persist batch if opts[:persist]
-         puts "------- Batch: #{batch_num} Size: #{batch.length} -------"
       end
       puts "------- Total: #{@data.length} -------"
     end

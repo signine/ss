@@ -39,6 +39,6 @@ def find_player_id_by_name player
   ret.first[:id]
 end
 
-collector = NBA::DataCollector.new provider, TABLE, COLUMNS, :batch_size => 10
+collector = NBA::DataCollector.new provider, TABLE, :batch_size => 10
 runner = NBA::DataCollectorClient.new collector
 runner.run ARGV

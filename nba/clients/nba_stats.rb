@@ -59,7 +59,7 @@ class NBAStats
 
   def extract_data(response, opts)
     if opts[:result_set]
-      response["resultSets"].select { |r| r["name"] == opts[:result_set] }["rowSet"]
+      response["resultSets"].select { |r| r["name"] == opts[:result_set] }.first["rowSet"]
     else
       response["resultSets"].first["rowSet"]
     end
