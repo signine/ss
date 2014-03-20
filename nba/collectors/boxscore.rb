@@ -73,26 +73,7 @@ class Boxscore
         players << player
         next
       end
-      player[:min] = convert_min_to_sec stat.min
-      player[:fgm] = stat.fgm
-      player[:fga] = stat.fga
-      player[:fg] = stat.fg_pct
-      player[:fgm3] = stat.fg3m
-      player[:fga3] = stat.fg3a
-      player[:fg3] = stat.fg3_pct
-      player[:ftm] = stat.ftm
-      player[:fta] = stat.fta
-      player[:ft] = stat.ft_pct
-      player[:oreb] = stat.oreb
-      player[:dreb] = stat.dreb
-      player[:reb] = stat.reb
-      player[:ast] = stat.ast
-      player[:blk] = stat.blk
-      player[:stl] = stat.stl
-      player[:tov] = stat.to
-      player[:pf] = stat.pf
-      player[:pts] = stat.pts
-      player[:plus_minus] = stat.plus_minus.to_i
+      player.merge! build_player_stat stat
 
       players << player
     end
@@ -121,27 +102,7 @@ class Boxscore
         players << player
         next
       end
-      player[:min] = convert_min_to_sec stat.min
-      player[:dist] = stat.dist
-      player[:spd] = stat.spd
-      player[:orbc] = stat.orbc
-      player[:drbc] = stat.drbc
-      player[:rbc] = stat.rbc
-      player[:tchs] = stat.tchs
-      player[:sast] = stat.sast
-      player[:ftast] = stat.ftast
-      player[:pass] = stat.pass
-      player[:ast] = stat.ast
-      player[:cfgm] = stat.cfgm
-      player[:cfga] = stat.cfga
-      player[:cfg] = stat.cfg_pct
-      player[:ufgm] = stat.ufgm
-      player[:ufga] = stat.ufga
-      player[:ufg] = stat.ufg_pct
-      player[:fg] = stat.fg_pct
-      player[:dfgm] = stat.dfgm
-      player[:dfga] = stat.dfga
-      player[:dfg] = stat.dfg_pct
+      player.merge! build_tracking_stat stat
 
       players << player
     end
@@ -150,6 +111,57 @@ class Boxscore
     collector.collect
 
     players
+  end
+
+  def build_player_stat stat
+    {
+      :min => convert_min_to_sec(stat.min),
+      :fgm => stat.fgm,
+      :fga => stat.fga,
+      :fg => stat.fg_pct,
+      :fgm3 => stat.fg3m,
+      :fga3 => stat.fg3a,
+      :fg3 => stat.fg3_pct,
+      :ftm => stat.ftm,
+      :fta => stat.fta,
+      :ft => stat.ft_pct,
+      :oreb => stat.oreb,
+      :dreb => stat.dreb,
+      :reb => stat.reb,
+      :ast => stat.ast,
+      :blk => stat.blk,
+      :stl => stat.stl,
+      :tov => stat.to,
+      :pf => stat.pf,
+      :pts => stat.pts,
+      :plus_minus => stat.plus_minus.to_i
+    }
+  end
+
+  def build_tracking_stat stat
+    {
+      :min => convert_min_to_sec(stat.min),
+      :dist => stat.dist,
+      :spd => stat.spd,
+      :orbc => stat.orbc,
+      :drbc => stat.drbc,
+      :rbc => stat.rbc,
+      :tchs => stat.tchs,
+      :sast => stat.sast,
+      :ftast => stat.ftast,
+      :pass => stat.pass,
+      :ast => stat.ast,
+      :cfgm => stat.cfgm,
+      :cfga => stat.cfga,
+      :cfg => stat.cfg_pct,
+      :ufgm => stat.ufgm,
+      :ufga => stat.ufga,
+      :ufg => stat.ufg_pct,
+      :fg => stat.fg_pct,
+      :dfgm => stat.dfgm,
+      :dfga => stat.dfga,
+      :dfg => stat.dfg_pct
+    }
   end
 
   def convert_min_to_sec min
