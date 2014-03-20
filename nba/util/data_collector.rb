@@ -41,8 +41,7 @@ module NBA
     private
     def persist batch 
       @persist_lock.synchronize do
-        @db ||= NBA::DBManager.create_connection
-        table = @db[@table_name]
+        table = @DB[@table_name]
 
         batch.each_with_index do |data, i|
           puts "Inserting --> #{i+1}/#{batch.length}"

@@ -20,11 +20,11 @@ class Boxscore
                                 "EndRange" => 0, 
                                 "StartPeriod" => 0, 
                                 "EndPeriod"=> 0 
-    #ingest_boxscore
-    #ingest_player_stats
-    #ingest_player_tracking
-    #ingest_team_stats
-     ingest_team_tracking
+    ingest_boxscore
+    ingest_player_stats
+    ingest_player_tracking
+    ingest_team_stats
+    ingest_team_tracking
   end
 
   private
@@ -65,13 +65,13 @@ class Boxscore
       player = {}
 
       player[:player_name] = stat.player_name
-      player[:player_id] = get_player_id player[:name]
+      player[:player_id] = get_player_id player[:player_name]
       player[:did_not_play] = player_played? stat
       player[:team] = get_team_by_id(stat.team_id)[:code]
       player[:win] = team_win? player[:team]
       player[:game_date] = @game[:date]
       player[:game_id] = get_game()[:id]
-      if player[:did_not_play] 
+      if player[:did_not_play] || stat.min == nil
         players << player
         next
       end
@@ -259,6 +259,7 @@ class Boxscore
 
 end
 
+=begin
 d = {:date=>"03/18/2014",
     :nba_stats_game_id=>"0021301004",
       :home_team=>"hawks",
@@ -268,3 +269,4 @@ d = {:date=>"03/18/2014",
 
 c = Boxscore.new(d) 
 c.work
+=end
