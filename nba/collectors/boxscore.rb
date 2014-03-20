@@ -22,7 +22,9 @@ class Boxscore
                                 "EndPeriod"=> 0 
     #ingest_boxscore
     #ingest_player_stats
-    ingest_player_tracking
+    #ingest_player_tracking
+    ingest_team_stats
+    
   end
 
   private
@@ -66,7 +68,7 @@ class Boxscore
       player[:player_id] = get_player_id player[:name]
       player[:did_not_play] = player_played? stat
       player[:team] = get_team_by_id(stat.team_id)[:code]
-      player[:win] = player_win? player[:team]
+      player[:win] = team_win? player[:team]
       player[:game_date] = @game[:date]
       player[:game_id] = get_game()[:id]
       if player[:did_not_play] 
@@ -95,7 +97,7 @@ class Boxscore
       player[:player_id] = get_player_id player[:player_name]
       player[:did_not_play] = player_played? stat
       player[:team] = get_team_by_id(stat.team_id)[:code]
-      player[:win] = player_win? player[:team]
+      player[:win] = team_win? player[:team]
       player[:game_date] = @game[:date]
       player[:game_id] = get_game()[:id]
       if player[:did_not_play] 
@@ -111,6 +113,27 @@ class Boxscore
     collector.collect
 
     players
+  end
+
+  def ingest_team_stats
+    team_stats = @nba_stats.get_stat("boxscore", :result_set => "TeamStats")
+    teams = []
+
+    team_stats.each do |stat|
+      team = {}
+      team[:team] = get_team_by_id(stat.team_id)[:code]
+      team[:win] = team_win? team[:team]
+      team[:game_date] = @game[:date]
+      team[:game_id] = get_game()[:id]
+      team.merge! build_player_stat stat
+
+      teams << team
+    end
+
+    collector = NBA::DataCollector.new teams.to_enum, :team_game_log, :persist => true
+    collector.collect
+
+    teams 
   end
 
   def build_player_stat stat
@@ -180,7 +203,7 @@ class Boxscore
     game.first
   end
 
-  def player_win? team
+  def team_win? team
     team == @winner ? true : false
   end
 
