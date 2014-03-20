@@ -17,6 +17,7 @@ CREATE TABLE player_tracking_log
   sast INTEGER, 
   ftast INTEGER, 
   dfgm INTEGER, 
+  dfga INTEGER, 
   dfg FLOAT, 
   orbc INTEGER, 
   drbc INTEGER, 

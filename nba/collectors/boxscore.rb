@@ -57,7 +57,6 @@ class Boxscore
 
   def ingest_player_stats
     player_stats = @nba_stats.get_stat("boxscore", :result_set => "PlayerStats")
-#    pp player_stats
     players = []
 
     player_stats.each do |stat|
@@ -105,7 +104,52 @@ class Boxscore
   end
 
   def ingest_player_tracking
+    player_stats = @nba_stats.get_stat("boxscore", :result_set => "PlayerTrack")
+    players = []
 
+    player_stats.each do |stat|
+      player = {}
+
+      player[:player_name] = stat.player_name
+      player[:player_id] = get_player_id player[:player_name]
+      player[:did_not_play] = player_played? stat
+      player[:team] = get_team_by_id(stat.team_id)[:code]
+      player[:win] = player_win? player[:team]
+      player[:game_date] = @game[:date]
+      player[:game_id] = get_game()[:id]
+      if player[:did_not_play] 
+        players << player
+        next
+      end
+      player[:min] = convert_min_to_sec stat.min
+      player[:dist] = stat.dist
+      player[:spd] = stat.spd
+      player[:orbc] = stat.orbc
+      player[:drbc] = stat.drbc
+      player[:rbc] = stat.rbc
+      player[:tchs] = stat.tchs
+      player[:sast] = stat.sast
+      player[:ftast] = stat.ftast
+      player[:pass] = stat.pass
+      player[:ast] = stat.ast
+      player[:cfgm] = stat.cfgm
+      player[:cfga] = stat.cfga
+      player[:cfg] = stat.cfg_pct
+      player[:ufgm] = stat.ufgm
+      player[:ufga] = stat.ufga
+      player[:ufg] = stat.ufg_pct
+      player[:fg] = stat.fg_pct
+      player[:dfgm] = stat.dfgm
+      player[:dfga] = stat.dfga
+      player[:dfg] = stat.dfg_pct
+
+      players << player
+    end
+
+    collector = NBA::DataCollector.new players.to_enum, :player_tracking_log, :persist => true
+    collector.collect
+
+    players
   end
 
   def convert_min_to_sec min
