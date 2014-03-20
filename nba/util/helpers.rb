@@ -8,5 +8,13 @@ module NBA
       end
     end
 
+    module Player
+      
+      def get_player_by_name name, db
+        db[:players].where(:name => name).to_a
+      end
+
+    end
+
   end
 end

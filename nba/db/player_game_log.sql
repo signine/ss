@@ -3,6 +3,7 @@ CREATE TABLE player_game_log
   id SERIAL NOT NULL,
   player_name VARCHAR(100),
   player_id BIGINT,
+  did_not_play BOOLEAN DEFAULT FALSE,
   team VARCHAR(20),
   win BOOLEAN,
   game_date DATE,
