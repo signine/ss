@@ -63,7 +63,7 @@ class Boxscore
     player_stats.each do |stat|
       player = {}
 
-      player[:name] = stat.player_name
+      player[:player_name] = stat.player_name
       player[:player_id] = get_player_id player[:name]
       player[:did_not_play] = player_played? stat
       player[:team] = get_team_by_id(stat.team_id)[:code]
@@ -86,7 +86,7 @@ class Boxscore
       player[:ft] = stat.ft_pct
       player[:oreb] = stat.oreb
       player[:dreb] = stat.dreb
-      player[:red] = stat.reb
+      player[:reb] = stat.reb
       player[:ast] = stat.ast
       player[:blk] = stat.blk
       player[:stl] = stat.stl
@@ -98,7 +98,10 @@ class Boxscore
       players << player
     end
 
-    pp players
+    collector = NBA::DataCollector.new players.to_enum, :player_game_log, :persist => true
+    collector.collect
+
+    players
   end
 
   def convert_min_to_sec min
