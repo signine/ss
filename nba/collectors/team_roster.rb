@@ -21,9 +21,19 @@ Enumerator.new do |yielder|
       p[:team] = team[:code] 
       p.delete :espn_id
 
+      if record_exists?(:team_roster, p)
+        puts "Found player: #{p}"
+        next
+      end
+
       yielder << p
     end
   end
+end
+
+def record_exists? table, record
+  ret = DB[table].where(record).to_a
+  !ret.empty?
 end
 
 def find_player_id_by_name player
