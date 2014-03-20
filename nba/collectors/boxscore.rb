@@ -23,8 +23,8 @@ class Boxscore
     #ingest_boxscore
     #ingest_player_stats
     #ingest_player_tracking
-    ingest_team_stats
-    
+    #ingest_team_stats
+     ingest_team_tracking
   end
 
   private
@@ -104,6 +104,7 @@ class Boxscore
         players << player
         next
       end
+      player[:spd] = stat.spd
       player.merge! build_tracking_stat stat
 
       players << player
@@ -136,6 +137,27 @@ class Boxscore
     teams 
   end
 
+  def ingest_team_tracking
+    team_stats = @nba_stats.get_stat("boxscore", :result_set => "PlayerTrackTeam")
+    teams = []
+
+    team_stats.each do |stat|
+      team = {}
+      team[:team] = get_team_by_id(stat.team_id)[:code]
+      team[:win] = team_win? team[:team]
+      team[:game_date] = @game[:date]
+      team[:game_id] = get_game()[:id]
+      team.merge! build_tracking_stat stat
+      
+      teams << team
+    end
+
+    collector = NBA::DataCollector.new teams.to_enum, :team_tracking_log, :persist => true
+    collector.collect
+
+    teams
+  end
+
   def build_player_stat stat
     {
       :min => convert_min_to_sec(stat.min),
@@ -165,7 +187,6 @@ class Boxscore
     {
       :min => convert_min_to_sec(stat.min),
       :dist => stat.dist,
-      :spd => stat.spd,
       :orbc => stat.orbc,
       :drbc => stat.drbc,
       :rbc => stat.rbc,
