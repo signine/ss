@@ -21,8 +21,8 @@ class Boxscore
                                 "StartPeriod" => 0, 
                                 "EndPeriod"=> 0 
     #ingest_boxscore
-    ingest_player_stats
-    #ingest_player_tracking
+    #ingest_player_stats
+    ingest_player_tracking
   end
 
   private
@@ -102,6 +102,10 @@ class Boxscore
     collector.collect
 
     players
+  end
+
+  def ingest_player_tracking
+
   end
 
   def convert_min_to_sec min
