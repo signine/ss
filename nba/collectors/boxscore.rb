@@ -51,7 +51,7 @@ class Boxscore
     @winner = boxscore[:winner]
     @loser = boxscore[:loser]
 
-    collector = NBA::DataCollector.new [boxscore].to_enum, :game, :persist => true
+    collector = NBA::DataCollector.new [boxscore].to_enum, :game, :persist => true, :match_params => [:game_date, :home_team, :visitor_team]
     collector.collect
 
     boxscore
@@ -80,7 +80,7 @@ class Boxscore
       players << player
     end
 
-    collector = NBA::DataCollector.new players.to_enum, :player_game_log, :persist => true
+    collector = NBA::DataCollector.new players.to_enum, :player_game_log, :persist => true, :match_params => [:player_name, :game_date, :team]
     collector.collect
 
     players
@@ -110,7 +110,7 @@ class Boxscore
       players << player
     end
 
-    collector = NBA::DataCollector.new players.to_enum, :player_tracking_log, :persist => true
+    collector = NBA::DataCollector.new players.to_enum, :player_tracking_log, :persist => true, :match_params => [:player_name, :game_date, :team]
     collector.collect
 
     players
@@ -131,7 +131,7 @@ class Boxscore
       teams << team
     end
 
-    collector = NBA::DataCollector.new teams.to_enum, :team_game_log, :persist => true
+    collector = NBA::DataCollector.new teams.to_enum, :team_game_log, :persist => true, :match_params => [:team, :game_date]
     collector.collect
 
     teams 
@@ -152,7 +152,7 @@ class Boxscore
       teams << team
     end
 
-    collector = NBA::DataCollector.new teams.to_enum, :team_tracking_log, :persist => true
+    collector = NBA::DataCollector.new teams.to_enum, :team_tracking_log, :persist => true, :match_params => [:team, :game_date]
     collector.collect
 
     teams

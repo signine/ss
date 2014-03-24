@@ -88,7 +88,7 @@ module NBA
          ensure 
            @data.concat batch
 
-           persist batch, if @opts[:persist]
+           persist batch if @opts[:persist]
            puts "------- Batch: #{batch_num} Size: #{batch.length} -------"
          end
       end
